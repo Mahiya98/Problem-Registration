@@ -1,0 +1,675 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #d9542e;
+    --dark: #1f2937;
+    --light: #f5f3f0;
+    --border: #d4ccc4;
+    --text: #4b5563;
+    --success: #10b981;
+    --warning: #f59e0b;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #f5f3f0 0%, #faf8f5 100%);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* HEADER */
+.header {
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 40px 20px;
+    border-bottom: 4px solid var(--primary);
+    margin-bottom: 40px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.header .label {
+    font-size: 0.6em;
+    opacity: 0.8;
+    display: block;
+}
+
+.header .highlight {
+    color: var(--primary);
+}
+
+.subtitle {
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+.tickets-count {
+    text-align: right;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 25px;
+    border-radius: 8px;
+}
+
+.count {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.count-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    opacity: 0.8;
+    letter-spacing: 1px;
+}
+
+/* SECTIONS */
+.form-section,
+.problems-section {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--dark);
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 3px solid var(--primary);
+    padding-bottom: 15px;
+}
+
+/* FORM ELEMENTS */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text);
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    color: var(--dark);
+    transition: border-color 0.3s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: #fafaf8;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* SBU BUTTONS */
+.sbu-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.sbu-btn {
+    padding: 12px 15px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    background: white;
+    color: var(--dark);
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.sbu-btn:hover {
+    border-color: var(--primary);
+    background: #faf8f5;
+}
+
+.sbu-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* BUTTONS */
+.btn-submit {
+    width: 100%;
+    padding: 15px;
+    background: #1f2937;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+}
+
+.btn-submit:hover {
+    background: var(--primary);
+}
+
+.btn-submit:active {
+    transform: scale(0.98);
+}
+
+.btn-progress {
+    background: var(--warning);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 10px;
+    transition: all 0.3s;
+}
+
+.btn-progress:hover {
+    background: #d97706;
+}
+
+.btn-solved {
+    background: var(--success);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.btn-solved:hover {
+    background: #059669;
+}
+
+.btn-cancel {
+    background: #e5e7eb;
+    color: var(--dark);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-cancel:hover {
+    background: #d1d5db;
+}
+
+/* FILTER BUTTONS */
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 15px;
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    background: white;
+    color: var(--dark);
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover {
+    border-color: var(--primary);
+}
+
+.filter-btn.active {
+    background: var(--dark);
+    color: white;
+    border-color: var(--dark);
+}
+
+.filter-btn .count {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 5px;
+}
+
+/* PROBLEMS LIST */
+.problems-list {
+    display: grid;
+    gap: 15px;
+}
+
+.problem-card {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    background: white;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.problem-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(217, 84, 46, 0.1);
+}
+
+.problem-card.solved {
+    background: #f0fdf4;
+    border-color: var(--success);
+}
+
+.problem-card.in-progress {
+    background: #fffbeb;
+    border-color: var(--warning);
+}
+
+.problem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 10px;
+}
+
+.problem-meta {
+    flex: 1;
+}
+
+.problem-sbu {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.problem-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--dark);
+    margin-bottom: 8px;
+}
+
+.problem-meta-info {
+    font-size: 0.8rem;
+    color: #999;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.problem-description {
+    color: var(--text);
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.problem-suggested {
+    background: #f9f7f4;
+    padding: 12px;
+    border-left: 3px solid var(--primary);
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.solution-badge {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-badge.solved {
+    background: var(--success);
+    color: white;
+}
+
+.status-badge.in-progress {
+    background: var(--warning);
+    color: white;
+}
+
+.status-badge.open {
+    background: #e5e7eb;
+    color: var(--dark);
+}
+
+.problem-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: all 0.3s;
+    text-transform: uppercase;
+}
+
+.btn-add-solution {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-add-solution:hover {
+    background: #c94620;
+}
+
+.btn-view-solution {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-view-solution:hover {
+    background: #2563eb;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-style: italic;
+}
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    animation: fadeIn 0.3s;
+}
+
+.modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 2px solid var(--border);
+}
+
+.modal-header h3 {
+    font-size: 1.3rem;
+    color: var(--dark);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text);
+}
+
+.modal-close:hover {
+    color: var(--primary);
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 2px solid var(--border);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.problem-detail {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border);
+}
+
+.detail-row {
+    margin-bottom: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.detail-label {
+    font-weight: bold;
+    color: var(--text);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    min-width: 100px;
+}
+
+.detail-value {
+    color: var(--dark);
+}
+
+.solution-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border);
+}
+
+.solution-section h4 {
+    font-size: 1rem;
+    color: var(--dark);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.solution-text {
+    background: #f9f7f4;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 3px solid var(--primary);
+    line-height: 1.6;
+}
+
+.error-message {
+    color: #dc2626;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    display: none;
+}
+
+.error-message.show {
+    display: block;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .header {
+        padding: 25px 15px;
+    }
+
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .tickets-count {
+        width: 100%;
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .form-section,
+    .problems-section {
+        padding: 20px;
+    }
+
+    .sbu-buttons {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 8px;
+    }
+
+    .filter-buttons {
+        gap: 6px;
+    }
+
+    .filter-btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    .problem-header {
+        flex-direction: column;
+    }
+
+    .problem-actions {
+        flex-direction: column;
+    }
+
+    .btn-small {
+        width: 100%;
+    }
+
+    .btn-progress,
+    .btn-solved {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .modal-footer button {
+        width: 100%;
+    }
+
+    .detail-row {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.3rem;
+    }
+
+    .header .label {
+        font-size: 0.5rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+    }
+
+    .sbu-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .problem-card {
+        padding: 15px;
+    }
+}
