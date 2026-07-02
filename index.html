@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Solving Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1><span class="label">FACTORY FLOOR</span> <span class="highlight">PROBLEM REGISTER</span></h1>
+                    <p class="subtitle">Log it here. Someone reads every ticket.</p>
+                </div>
+                <div class="tickets-count">
+                    <div class="count" id="ticketsLogged">0</div>
+                    <div class="count-label">TICKETS LOGGED</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- NEW TICKET SECTION -->
+        <section class="form-section">
+            <h2 class="section-title">NEW TICKET</h2>
+            
+            <form id="problemForm">
+                <!-- SBU Selection -->
+                <div class="form-group">
+                    <label class="form-label">SBU</label>
+                    <div class="sbu-buttons">
+                        <button type="button" class="sbu-btn" data-sbu="ACCL">ACCL</button>
+                        <button type="button" class="sbu-btn" data-sbu="APFIL">APFIL</button>
+                        <button type="button" class="sbu-btn" data-sbu="AIL">AIL</button>
+                        <button type="button" class="sbu-btn" data-sbu="AEL">AEL</button>
+                        <button type="button" class="sbu-btn" data-sbu="ALEL">ALEL</button>
+                        <button type="button" class="sbu-btn" data-sbu="AAFL">AAFL</button>
+                        <button type="button" class="sbu-btn" data-sbu="MRML">MRML</button>
+                    </div>
+                    <input type="hidden" id="selectedSBU" required>
+                </div>
+
+                <!-- Your Name -->
+                <div class="form-group">
+                    <label class="form-label" for="yourName">YOUR NAME</label>
+                    <input type="text" id="yourName" class="form-input" placeholder="Enter your name" required>
+                </div>
+
+                <!-- Date -->
+                <div class="form-group">
+                    <label class="form-label" for="problemDate">DATE</label>
+                    <input type="date" id="problemDate" class="form-input" required>
+                </div>
+
+                <!-- Problem -->
+                <div class="form-group">
+                    <label class="form-label" for="problemDesc">PROBLEM</label>
+                    <textarea id="problemDesc" class="form-input form-textarea" placeholder="Describe the problem" required></textarea>
+                </div>
+
+                <!-- Suggested Solution -->
+                <div class="form-group">
+                    <label class="form-label" for="suggestedSolution">SUGGESTED SOLUTION (optional)</label>
+                    <textarea id="suggestedSolution" class="form-input form-textarea" placeholder="Your suggested solution..."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit">SUBMIT TICKET</button>
+                <div id="formError" class="error-message"></div>
+            </form>
+        </section>
+
+        <!-- LOGGED PROBLEMS SECTION -->
+        <section class="problems-section">
+            <h2 class="section-title">LOGGED PROBLEMS</h2>
+            
+            <!-- Filter Buttons -->
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">ALL <span class="count">0</span></button>
+                <button class="filter-btn" data-filter="ACCL">ACCL <span class="count">0</span></button>
+                <button class="filter-btn" data-filter="APFIL">APFIL <span class="count">0</span></button>
+                <button class="filter-btn" data-filter="AIL">AIL <span class="count">0</span></button>
+                <button class="filter-btn" data-filter="AEL">AEL <span class="count">0</span></button>
+                <button class="filter-btn" data-filter="ALEL">ALEL <span class="count">0</span></button>
+                <button class="filter-btn" data-filter="AAFL">AAFL <span class="count">0</span></button>
+                <button class="filter-btn" data-filter="MRML">MRML <span class="count">0</span></button>
+            </div>
+
+            <!-- Problems List -->
+            <div id="problemsList" class="problems-list">
+                <p class="empty-state">No tickets yet. First one wins.</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- MODAL FOR ADDING SOLUTION -->
+    <div id="solutionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Manager Solution</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalProblemDetail" class="problem-detail"></div>
+                <div class="form-group">
+                    <label class="form-label">MANAGER SOLUTION</label>
+                    <textarea id="managerSolution" class="form-input form-textarea" placeholder="Enter the solution here..." required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="saveSolutionBtn" class="btn-submit">SAVE SOLUTION</button>
+                <button class="btn-cancel">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FOR VIEWING SOLUTION -->
+    <div id="viewSolutionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Problem & Solution</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="viewProblemDetail" class="problem-detail"></div>
+                <div class="solution-section">
+                    <h4>Manager Solution</h4>
+                    <div id="viewSolution" class="solution-text"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="progressBtn" class="btn-progress">IN PROGRESS</button>
+                <button id="solvedBtn" class="btn-solved">MARK AS SOLVED</button>
+                <button class="btn-cancel">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
