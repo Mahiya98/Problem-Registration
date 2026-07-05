@@ -154,6 +154,13 @@ body {
     min-height: 80px;
 }
 
+/* TWO COLUMN LAYOUT FOR NAME & EMPLOYEE ID */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
 /* SBU & PRIORITY BUTTONS */
 .sbu-buttons,
 .priority-buttons {
@@ -391,6 +398,19 @@ body {
 .problem-sbu {
     display: inline-block;
     background: var(--primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    margin-right: 8px;
+}
+
+.employee-id-badge {
+    display: inline-block;
+    background: #7c3aed;
     color: white;
     padding: 4px 12px;
     border-radius: 4px;
@@ -720,6 +740,10 @@ body {
         padding: 20px;
     }
 
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
     .sbu-buttons,
     .priority-buttons {
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -845,10 +869,16 @@ body {
                     <input type="hidden" id="selectedPriority" required>
                 </div>
 
-                <!-- Your Name -->
-                <div class="form-group">
-                    <label class="form-label" for="yourName">YOUR NAME</label>
-                    <input type="text" id="yourName" class="form-input" placeholder="Enter your name" required>
+                <!-- Your Name and Employee ID (Two Column) -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="yourName">YOUR NAME</label>
+                        <input type="text" id="yourName" class="form-input" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="employeeId">EMPLOYEE ID</label>
+                        <input type="text" id="employeeId" class="form-input" placeholder="Enter employee ID" required>
+                    </div>
                 </div>
 
                 <!-- Date -->
@@ -1070,6 +1100,7 @@ class ProblemManager {
         const sbu = document.getElementById('selectedSBU').value;
         const priority = document.getElementById('selectedPriority').value;
         const name = document.getElementById('yourName').value;
+        const employeeId = document.getElementById('employeeId').value;
         const date = document.getElementById('problemDate').value;
         const problem = document.getElementById('problemDesc').value;
         const suggested = document.getElementById('suggestedSolution').value;
@@ -1088,6 +1119,7 @@ class ProblemManager {
             id: Date.now().toString(),
             sbu,
             name,
+            employeeId,
             date,
             problem,
             suggested,
@@ -1159,6 +1191,10 @@ class ProblemManager {
                 <span class="detail-value">${problem.name}</span>
             </div>
             <div class="detail-row">
+                <span class="detail-label">Employee ID:</span>
+                <span class="detail-value">${problem.employeeId}</span>
+            </div>
+            <div class="detail-row">
                 <span class="detail-label">Date:</span>
                 <span class="detail-value">${new Date(problem.date).toLocaleDateString()}</span>
             </div>
@@ -1215,6 +1251,10 @@ class ProblemManager {
                 <span class="detail-value">${problem.name}</span>
             </div>
             <div class="detail-row">
+                <span class="detail-label">Employee ID:</span>
+                <span class="detail-value">${problem.employeeId}</span>
+            </div>
+            <div class="detail-row">
                 <span class="detail-label">Date:</span>
                 <span class="detail-value">${new Date(problem.date).toLocaleDateString()}</span>
             </div>
@@ -1263,13 +1303,11 @@ class ProblemManager {
             return;
         }
 
-        // Create Google Calendar event link
         const eventTitle = `Problem: ${problem.problem.substring(0, 50)}`;
-        const eventDescription = `SBU: ${problem.sbu}\nPriority: ${problem.priority}\nReporter: ${problem.name}\n\nDetails: ${problem.problem}`;
+        const eventDescription = `SBU: ${problem.sbu}\nEmployee: ${problem.name}\nEmployee ID: ${problem.employeeId}\nPriority: ${problem.priority}\n\nDetails: ${problem.problem}`;
         
         const calendarLink = this.generateGoogleCalendarLink(email, eventTitle, eventDescription);
         
-        // Open in new window
         window.open(calendarLink, '_blank');
         
         this.showSyncStatus('✓ Opening Google Calendar...', 'success');
@@ -1278,8 +1316,8 @@ class ProblemManager {
 
     generateGoogleCalendarLink(email, title, description) {
         const now = new Date();
-        const startTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // Tomorrow
-        const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // 1 hour later
+        const startTime = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
 
         const start = this.formatDateForGoogle(startTime);
         const end = this.formatDateForGoogle(endTime);
@@ -1325,12 +1363,16 @@ class ProblemManager {
                 <span class="detail-value">${problem.sbu}</span>
             </div>
             <div class="detail-row">
-                <span class="detail-label">Problem:</span>
-                <span class="detail-value">${problem.problem.substring(0, 100)}${problem.problem.length > 100 ? '...' : ''}</span>
-            </div>
-            <div class="detail-row">
                 <span class="detail-label">Reporter:</span>
                 <span class="detail-value">${problem.name}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Employee ID:</span>
+                <span class="detail-value">${problem.employeeId}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Problem:</span>
+                <span class="detail-value">${problem.problem.substring(0, 100)}${problem.problem.length > 100 ? '...' : ''}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Date:</span>
@@ -1408,6 +1450,7 @@ class ProblemManager {
                 <div class="problem-header">
                     <div class="problem-meta">
                         <span class="problem-sbu">${problem.sbu}</span>
+                        <span class="employee-id-badge">EMP: ${problem.employeeId}</span>
                         <span class="priority-badge ${problem.priority}">${problem.priority}</span>
                         <div class="problem-title">${problem.problem.substring(0, 50)}${problem.problem.length > 50 ? '...' : ''}</div>
                         <div class="problem-meta-info">
