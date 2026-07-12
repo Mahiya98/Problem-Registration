@@ -37,7 +37,6 @@ body {
     padding: 0 20px;
 }
 
-/* HEADER */
 .header {
     background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
     color: white;
@@ -95,7 +94,6 @@ body {
     letter-spacing: 1px;
 }
 
-/* SECTIONS */
 .form-section,
 .problems-section {
     background: white;
@@ -117,7 +115,6 @@ body {
     padding-bottom: 15px;
 }
 
-/* FORM ELEMENTS */
 .form-group {
     margin-bottom: 25px;
 }
@@ -154,14 +151,12 @@ body {
     min-height: 80px;
 }
 
-/* TWO COLUMN LAYOUT */
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
-/* SBU & PRIORITY BUTTONS */
 .sbu-buttons,
 .priority-buttons {
     display: grid;
@@ -214,7 +209,6 @@ body {
     background: #6b7280;
 }
 
-/* BUTTONS */
 .btn-submit {
     width: 100%;
     padding: 15px;
@@ -321,7 +315,6 @@ body {
     background: #dc2626;
 }
 
-/* FILTER BUTTONS */
 .filter-buttons {
     display: flex;
     gap: 8px;
@@ -359,7 +352,6 @@ body {
     margin-left: 5px;
 }
 
-/* PROBLEMS LIST */
 .problems-list {
     display: grid;
     gap: 15px;
@@ -567,7 +559,6 @@ body {
     font-style: italic;
 }
 
-/* MODAL */
 .modal {
     display: none;
     position: fixed;
@@ -710,7 +701,6 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* RESPONSIVE */
 @media (max-width: 768px) {
     .header {
         padding: 25px 15px;
@@ -810,7 +800,6 @@ body {
     </style>
 </head>
 <body>
-    <!-- HEADER -->
     <header class="header">
         <div class="container">
             <div class="header-content">
@@ -827,12 +816,10 @@ body {
     </header>
 
     <div class="container">
-        <!-- NEW TICKET SECTION -->
         <section class="form-section">
             <h2 class="section-title">NEW TICKET</h2>
             
             <form id="problemForm">
-                <!-- SBU Selection -->
                 <div class="form-group">
                     <label class="form-label">SBU</label>
                     <div class="sbu-buttons">
@@ -847,7 +834,6 @@ body {
                     <input type="hidden" id="selectedSBU" required>
                 </div>
 
-                <!-- Priority Level -->
                 <div class="form-group">
                     <label class="form-label">PRIORITY LEVEL</label>
                     <div class="priority-buttons">
@@ -858,7 +844,6 @@ body {
                     <input type="hidden" id="selectedPriority" required>
                 </div>
 
-                <!-- Your Name and Employee ID (Two Column) -->
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label" for="yourName">YOUR NAME</label>
@@ -870,35 +855,29 @@ body {
                     </div>
                 </div>
 
-                <!-- Date -->
                 <div class="form-group">
                     <label class="form-label" for="problemDate">DATE</label>
                     <input type="date" id="problemDate" class="form-input" required>
                 </div>
 
-                <!-- Problem -->
                 <div class="form-group">
                     <label class="form-label" for="problemDesc">PROBLEM</label>
                     <textarea id="problemDesc" class="form-input form-textarea" placeholder="Describe the problem" required></textarea>
                 </div>
 
-                <!-- Suggested Solution -->
                 <div class="form-group">
                     <label class="form-label" for="suggestedSolution">SUGGESTED SOLUTION (optional)</label>
                     <textarea id="suggestedSolution" class="form-input form-textarea" placeholder="Your suggested solution..."></textarea>
                 </div>
 
-                <!-- Submit Button -->
                 <button type="submit" class="btn-submit" id="submitBtn">SUBMIT TICKET</button>
                 <div id="formError" class="error-message"></div>
             </form>
         </section>
 
-        <!-- LOGGED PROBLEMS SECTION -->
         <section class="problems-section">
             <h2 class="section-title">LOGGED PROBLEMS</h2>
             
-            <!-- Filter Buttons -->
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">ALL <span class="count">0</span></button>
                 <button class="filter-btn" data-filter="ACCL">ACCL <span class="count">0</span></button>
@@ -910,14 +889,12 @@ body {
                 <button class="filter-btn" data-filter="MRML">MRML <span class="count">0</span></button>
             </div>
 
-            <!-- Problems List -->
             <div id="problemsList" class="problems-list">
                 <p class="empty-state">No tickets yet. First one wins.</p>
             </div>
         </section>
     </div>
 
-    <!-- MODAL FOR ADDING SOLUTION -->
     <div id="solutionModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -938,7 +915,6 @@ body {
         </div>
     </div>
 
-    <!-- MODAL FOR VIEWING SOLUTION -->
     <div id="viewSolutionModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -960,7 +936,6 @@ body {
         </div>
     </div>
 
-    <!-- MODAL FOR DELETE CONFIRMATION -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -983,36 +958,24 @@ body {
     <div id="syncStatus"></div>
 
     <script>
-// ===== CONFIGURATION =====
-// REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT DEPLOYMENT URL
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyeJ2gIXm8_-a0PsBa9rJYd3ZJ5q1gcXMLyPCrBqxmiSxEWgifG2EuE_cbrYg1iTkAlog/exec';
 
 const STORAGE_KEY = 'problems_data';
 
 class ProblemManager {
-   constructor() {
+    constructor() {
+        this.problems = [];
+        this.currentFilter = 'all';
+        this.currentProblemId = null;
+        this.init();
+    }
 
-    this.problems = [];
-
-    this.currentFilter = 'all';
-
-    this.currentProblemId = null;
-
-    this.init();
-
-}
-
-   async init() {
-
-    this.setupEventListeners();
-
-    this.setDefaultDate();
-
-    await this.loadProblems();
-
-    this.render();
-
-}
+    async init() {
+        this.setupEventListeners();
+        this.setDefaultDate();
+        await this.loadProblems();
+        this.render();
+    }
 
     setupEventListeners() {
         document.getElementById('problemForm').addEventListener('submit', (e) => this.handleSubmit(e));
@@ -1111,10 +1074,8 @@ class ProblemManager {
         };
 
         try {
-            // Send to Google Sheet
             await this.sendToGoogleSheet(newProblem);
             
-            // Save locally
             this.problems.unshift(newProblem);
             this.saveProblems();
             this.resetForm();
@@ -1233,144 +1194,45 @@ class ProblemManager {
         modal.classList.add('show');
     }
 
- async saveSolution(problemId){
+    async saveSolution(problemId) {
+        const solution = document.getElementById('managerSolution').value.trim();
 
-    const solution = document
-        .getElementById('managerSolution')
-        .value
-        .trim();
-
-
-    if(!solution){
-        alert("Enter solution");
-        return;
-    }
-
-
-    try{
-
-        const response = await fetch(
-            GOOGLE_APPS_SCRIPT_URL,
-            {
-                method:"POST",
-
-                body:JSON.stringify({
-
-                    action:"updateSolution",
-                    id:String(problemId),
-                    solution:solution
-
-                })
-            }
-        );
-
-
-        const result = await response.json();
-
-
-        if(!result.success){
-            throw new Error(result.error);
+        if (!solution) {
+            alert("Enter solution");
+            return;
         }
 
-
-        // Reload from Google Sheet
-        await this.loadProblems();
-
-
-        this.closeModal();
-
-
-        this.render();
-
-
-        this.showSyncStatus(
-            "✓ Solution saved successfully",
-            "success"
-        );
-
-
-    }
-    catch(error){
-
-        console.error(
-            "Solution error:",
-            error
-        );
-
-        alert(
-            "Solution save failed"
-        );
-
-    }
-
-}
-
-    try {
-
-
-        const response = await fetch(
-            GOOGLE_APPS_SCRIPT_URL,
-            {
-                method:"POST",
-
-                body:JSON.stringify({
-
-                    action:"updateSolution",
-                    id:problemId,
-                    solution:solution
-
+        try {
+            const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "updateSolution",
+                    id: String(problemId),
+                    solution: solution
                 })
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.error);
             }
-        );
 
+            await this.loadProblems();
 
-        const result = await response.json();
+            this.closeModal();
+            this.render();
+            this.showSyncStatus("✓ Solution saved successfully", "success");
 
-
-        if(!result.success){
-
-            throw new Error(result.error);
-
+        } catch (error) {
+            console.error("Solution error:", error);
+            alert("Solution save failed");
         }
-
-
-
-        // update dashboard display
-        const problem = this.problems.find(
-            p => p.id == problemId
-        );
-
-
-        problem.solution = solution;
-
-
-        this.closeModal();
-
-        this.render();
-
-
-        this.showSyncStatus(
-        '✓ Solution saved permanently',
-        'success'
-        );
-
-
-
-    } catch(error){
-
-        console.error(error);
-
-        alert(
-        "Solution could not be saved"
-        );
-
     }
-
-}
 
     openViewSolutionModal(problemId) {
         const problem = this.problems.find(p => p.id == problemId);
-        if (!problem || !problem.solution) return;
+        if (!problem || !problem.solution || !problem.solution.trim()) return;
 
         this.currentProblemId = problemId;
 
@@ -1550,14 +1412,14 @@ class ProblemManager {
                 ` : ''}
 
                 <div class="problem-actions">
-                   ${(!problem.solution || problem.solution === "Pending") ? `
+                   ${(!problem.solution || !problem.solution.trim()) ? `
 <button class="btn-small btn-add-solution" 
 type="button" 
 onclick="manager.openSolutionModal('${problem.id}')">
 + Add Solution
 </button>
 ` : ''}
-                    ${(problem.solution && problem.solution !== "Pending") ? `
+                    ${(problem.solution && problem.solution.trim()) ? `
 <button class="btn-small btn-view-solution" 
 type="button" 
 onclick="manager.openViewSolutionModal('${problem.id}')">
@@ -1574,42 +1436,21 @@ View Solution
         localStorage.setItem(STORAGE_KEY, JSON.stringify(this.problems));
     }
 
-   async loadProblems() {
+    async loadProblems() {
+        try {
+            const response = await fetch(GOOGLE_APPS_SCRIPT_URL);
+            const data = await response.json();
+            this.problems = data;
 
-    try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(this.problems));
 
-        const response = await fetch(GOOGLE_APPS_SCRIPT_URL);
+        } catch (error) {
+            console.error("Google Sheet loading failed:", error);
 
-        const data = await response.json();
-
-        this.problems = data;
-
-
-        // keep local backup
-        localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify(this.problems)
-        );
-
-
-    } catch(error){
-
-        console.error(
-          "Google Sheet loading failed:",
-          error
-        );
-
-
-        // fallback
-        const localData = localStorage.getItem(STORAGE_KEY);
-
-        this.problems = localData 
-        ? JSON.parse(localData)
-        : [];
-
+            const localData = localStorage.getItem(STORAGE_KEY);
+            this.problems = localData ? JSON.parse(localData) : [];
+        }
     }
-
-}
 }
 
 const manager = new ProblemManager();
