@@ -1432,12 +1432,20 @@ class ProblemManager {
                 ` : ''}
 
                 <div class="problem-actions">
-                    ${!problem.solution ? `
-                        <button class="btn-small btn-add-solution" type="button" onclick="manager.openSolutionModal('${problem.id}')">+ Add Solution</button>
-                    ` : ''}
-                    ${problem.solution ? `
-                        <button class="btn-small btn-view-solution" type="button" onclick="manager.openViewSolutionModal('${problem.id}')">View Solution</button>
-                    ` : ''}
+                   ${(!problem.solution || problem.solution === "Pending") ? `
+<button class="btn-small btn-add-solution" 
+type="button" 
+onclick="manager.openSolutionModal('${problem.id}')">
++ Add Solution
+</button>
+` : ''}
+                    ${(problem.solution && problem.solution !== "Pending") ? `
+<button class="btn-small btn-view-solution" 
+type="button" 
+onclick="manager.openViewSolutionModal('${problem.id}')">
+View Solution
+</button>
+` : ''}
                     <button class="btn-small btn-delete-small" type="button" onclick="manager.openDeleteModal('${problem.id}')">🗑️ Delete</button>
                 </div>
             </div>
