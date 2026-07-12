@@ -990,19 +990,29 @@ const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyeJ2gIX
 const STORAGE_KEY = 'problems_data';
 
 class ProblemManager {
-    constructor() {
-        this.problems = [];
-        this.currentFilter = 'all';
-        this.currentProblemId = null;
-        this.init();
-    }
+   constructor() {
 
-    init() {
-        this.setupEventListeners();
-        this.setDefaultDate();
-        this.loadProblems();
-        this.render();
-    }
+    this.problems = [];
+
+    this.currentFilter = 'all';
+
+    this.currentProblemId = null;
+
+    this.init();
+
+}
+
+   async init() {
+
+    this.setupEventListeners();
+
+    this.setDefaultDate();
+
+    await this.loadProblems();
+
+    this.render();
+
+}
 
     setupEventListeners() {
         document.getElementById('problemForm').addEventListener('submit', (e) => this.handleSubmit(e));
@@ -1438,10 +1448,42 @@ class ProblemManager {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(this.problems));
     }
 
-    loadProblems() {
-        const data = localStorage.getItem(STORAGE_KEY);
-        this.problems = data ? JSON.parse(data) : [];
+   async loadProblems() {
+
+    try {
+
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL);
+
+        const data = await response.json();
+
+        this.problems = data;
+
+
+        // keep local backup
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(this.problems)
+        );
+
+
+    } catch(error){
+
+        console.error(
+          "Google Sheet loading failed:",
+          error
+        );
+
+
+        // fallback
+        const localData = localStorage.getItem(STORAGE_KEY);
+
+        this.problems = localData 
+        ? JSON.parse(localData)
+        : [];
+
     }
+
+}
 }
 
 const manager = new ProblemManager();
