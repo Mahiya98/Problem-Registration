@@ -1233,93 +1233,75 @@ class ProblemManager {
         modal.classList.add('show');
     }
 
-    async saveSolution(problemId){
+ async saveSolution(problemId){
+
+    const solution = document
+        .getElementById('managerSolution')
+        .value
+        .trim();
 
 
-const solution=document
-.getElementById('managerSolution')
-.value
-.trim();
+    if(!solution){
+        alert("Enter solution");
+        return;
+    }
 
 
+    try{
 
-if(!solution){
+        const response = await fetch(
+            GOOGLE_APPS_SCRIPT_URL,
+            {
+                method:"POST",
 
-alert("Enter solution");
-return;
+                body:JSON.stringify({
 
-}
+                    action:"updateSolution",
+                    id:String(problemId),
+                    solution:solution
 
-
-
-try{
-
-
-const response=await fetch(
-GOOGLE_APPS_SCRIPT_URL,
-{
-
-method:"POST",
-
-body:JSON.stringify({
-
-action:"updateSolution",
-
-id:problemId,
-
-solution:solution
-
-})
-
-});
+                })
+            }
+        );
 
 
-
-const result=await response.json();
-
+        const result = await response.json();
 
 
-if(!result.success){
-
-throw new Error(result.error);
-
-}
+        if(!result.success){
+            throw new Error(result.error);
+        }
 
 
-
-// reload latest data from sheet
-
-await this.loadProblems();
+        // Reload from Google Sheet
+        await this.loadProblems();
 
 
-
-this.closeModal();
-
-
-this.render();
+        this.closeModal();
 
 
-
-this.showSyncStatus(
-"✓ Solution saved successfully",
-"success"
-);
+        this.render();
 
 
-
-}
-catch(error){
-
-
-console.error(error);
-
-alert(
-"Solution save failed"
-);
+        this.showSyncStatus(
+            "✓ Solution saved successfully",
+            "success"
+        );
 
 
-}
+    }
+    catch(error){
 
+        console.error(
+            "Solution error:",
+            error
+        );
+
+        alert(
+            "Solution save failed"
+        );
+
+    }
 
 }
 
