@@ -1389,10 +1389,9 @@ class ProblemManager {
 
 if(meetingBtn){
 
-    meetingBtn.onclick = () => {
-        this.callMeeting(problemId);
-    };
-
+   meetingBtn.addEventListener("click", () => {
+    this.callMeeting(problemId);
+});
 }
 
 
@@ -1403,19 +1402,15 @@ if(meetingBtn){
 
 
 
-
 callMeeting(problemId){
-
 
     const problem = this.problems.find(
         p => p.id == problemId
     );
 
-
     if(!problem){
         return;
     }
-
 
 
     const email = prompt(
@@ -1428,18 +1423,88 @@ callMeeting(problemId){
     }
 
 
-
-    if(!email.includes("@gmail.com")){
-
-        alert(
-            "Please enter a valid Gmail address"
-        );
-
+    if(!email.includes("@")){
+        alert("Please enter a valid Gmail address");
         return;
+    }
+
+
+
+    const title =
+    `Problem Discussion Meeting - ${problem.id}`;
+
+
+
+    const description =
+`Problem ID: ${problem.id}
+
+SBU: ${problem.sbu}
+
+Reporter: ${problem.name}
+
+Employee ID: ${problem.employeeId}
+
+Problem:
+${problem.problem}
+
+Manager Solution:
+${problem.solution}
+`;
+
+
+
+    // Current time
+    const start = new Date();
+
+
+    // 1 hour meeting
+    const end = new Date(
+        start.getTime() + 60 * 60 * 1000
+    );
+
+
+
+    function formatGoogleDate(date){
+
+        return date
+        .toISOString()
+        .replace(/-|:|\.\d+/g,"");
 
     }
 
 
+
+    const calendarURL =
+    "https://calendar.google.com/calendar/render"
+    +
+    "?action=TEMPLATE"
+    +
+    "&text="
+    + encodeURIComponent(title)
+
+    +
+    "&details="
+    + encodeURIComponent(description)
+
+    +
+    "&add="
+    + encodeURIComponent(email)
+
+    +
+    "&dates="
+    + formatGoogleDate(start)
+    +
+    "/"
+    + formatGoogleDate(end);
+
+
+
+    window.open(
+        calendarURL,
+        "_blank"
+    );
+
+}
 
     const title =
     `Problem Discussion Meeting - ${problem.id}`;
