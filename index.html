@@ -279,10 +279,6 @@ body {
     margin-right:10px;
 }
 
-.btn-meeting:hover{
-    background:#6d28d9;
-}
-
 .btn-meeting:hover {
     background: #6d28d9;
 }
@@ -821,7 +817,7 @@ body {
     <div class="container">
         <section class="form-section">
             <h2 class="section-title">NEW TICKET</h2>
-            
+
             <form id="problemForm">
                 <div class="form-group">
                     <label class="form-label">SBU</label>
@@ -899,7 +895,7 @@ body {
 
         <section class="problems-section">
             <h2 class="section-title">LOGGED PROBLEMS</h2>
-            
+
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">ALL <span class="count">0</span></button>
                 <button class="filter-btn" data-filter="ACCL">ACCL <span class="count">0</span></button>
@@ -932,24 +928,21 @@ body {
             </div>
            <div class="modal-footer">
 
-    
-
-
-    <button id="progressBtn" 
-    class="btn-progress" 
+    <button id="addProgressBtn"
+    class="btn-progress"
     type="button">
-    IN PROGRESS
+    SAVE &amp; MARK IN PROGRESS
     </button>
 
 
-    <button id="solvedBtn" 
-    class="btn-solved" 
+    <button id="addSolvedBtn"
+    class="btn-solved"
     type="button">
-    MARK AS SOLVED
+    SAVE &amp; MARK AS SOLVED
     </button>
 
 
-    <button class="btn-cancel" 
+    <button class="btn-cancel"
     type="button">
     CLOSE
     </button>
@@ -961,7 +954,7 @@ body {
     <div id="viewSolutionModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Problem & Solution</h3>
+                <h3>Problem &amp; Solution</h3>
                 <button class="modal-close" type="button">&times;</button>
             </div>
             <div class="modal-body">
@@ -980,14 +973,14 @@ body {
     </button>
 
 
-    <button id="progressBtn"
+    <button id="viewProgressBtn"
     class="btn-progress"
     type="button">
     IN PROGRESS
     </button>
 
 
-    <button id="solvedBtn"
+    <button id="viewSolvedBtn"
     class="btn-solved"
     type="button">
     MARK AS SOLVED
@@ -1026,8 +1019,6 @@ body {
 
     <script>
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyeJ2gIXm8_-a0PsBa9rJYd3ZJ5q1gcXMLyPCrBqxmiSxEWgifG2EuE_cbrYg1iTkAlog/exec';
-
-const STORAGE_KEY = 'problems_data';
 
 class ProblemManager {
     constructor() {
@@ -1076,6 +1067,15 @@ class ProblemManager {
         });
 
         document.getElementById('confirmDeleteBtn').addEventListener('click', () => this.confirmDelete());
+
+        // "Add Manager Solution" modal: saving a solution also sets the status.
+        document.getElementById('addProgressBtn').addEventListener('click', () => this.saveSolution('in-progress'));
+        document.getElementById('addSolvedBtn').addEventListener('click', () => this.saveSolution('solved'));
+
+        // "View Solution" modal: change status (solution text already exists).
+        document.getElementById('viewProgressBtn').addEventListener('click', () => this.updateStatus(this.currentProblemId, 'in-progress'));
+        document.getElementById('viewSolvedBtn').addEventListener('click', () => this.updateStatus(this.currentProblemId, 'solved'));
+        document.getElementById('meetingBtn').addEventListener('click', () => this.callMeeting(this.currentProblemId));
     }
 
     setDefaultDate() {
@@ -1142,9 +1142,8 @@ class ProblemManager {
 
         try {
             await this.sendToGoogleSheet(newProblem);
-            
+
             this.problems.unshift(newProblem);
-            this.saveProblems();
             this.resetForm();
             this.render();
             this.showSyncStatus('✓ Ticket submitted & synced to Google Sheet', 'success');
@@ -1204,7 +1203,7 @@ class ProblemManager {
         indicator.textContent = message;
         indicator.style.background = type === 'success' ? '#10b981' : '#ef4444';
         indicator.style.display = 'block';
-        
+
         if (type === 'success') {
             setTimeout(() => indicator.style.display = 'none', 3000);
         }
@@ -1220,6 +1219,8 @@ class ProblemManager {
     openSolutionModal(problemId) {
         const problem = this.problems.find(p => p.id == problemId);
         if (!problem) return;
+
+        this.currentProblemId = problemId;
 
         const modal = document.getElementById('solutionModal');
         const detail = document.getElementById('modalProblemDetail');
@@ -1256,186 +1257,168 @@ class ProblemManager {
         `;
 
         document.getElementById('managerSolution').value = '';
-        document.getElementById('saveSolutionBtn').onclick = () => this.saveSolution(problemId);
 
         modal.classList.add('show');
     }
 
-    async saveSolution(problemId) {
+    // Saves the manager's solution text and sets the resulting status in one step.
+    async saveSolution(status) {
+        const problemId = this.currentProblemId;
+        const problem = this.problems.find(p => p.id == problemId);
+        if (!problem) return;
+
         const solution = document.getElementById('managerSolution').value.trim();
 
         if (!solution) {
-            alert("Enter solution");
+            alert('Enter solution');
             return;
         }
 
         try {
             const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-                method: "POST",
+                method: 'POST',
                 body: JSON.stringify({
-                    action: "updateSolution",
+                    action: 'updateSolution',
                     id: String(problemId),
-                    solution: solution
+                    solution: solution,
+                    status: status
                 })
             });
 
             const result = await response.json();
 
             if (!result.success) {
-                throw new Error(result.error);
+                throw new Error(result.error || 'Unknown error');
             }
 
-            await this.loadProblems();
+            problem.solution = solution;
+            problem.status = status;
 
             this.closeModal();
             this.render();
-            this.showSyncStatus("✓ Solution saved successfully", "success");
+            this.showSyncStatus(`✓ Solution saved — status: ${status}`, 'success');
 
         } catch (error) {
-            console.error("Solution error:", error);
-            alert("Solution save failed");
+            console.error('Solution error:', error);
+            alert('Solution save failed');
         }
     }
 
     openViewSolutionModal(problemId) {
+        const problem = this.problems.find(p => p.id == problemId);
 
-    const problem = this.problems.find(
-        p => p.id == problemId
-    );
+        if (!problem || !problem.solution || !problem.solution.trim()) {
+            return;
+        }
 
+        this.currentProblemId = problemId;
 
-    if (!problem || !problem.solution || !problem.solution.trim()) {
-        return;
-    }
+        const modal = document.getElementById('viewSolutionModal');
+        const detail = document.getElementById('viewProblemDetail');
+        const solutionDiv = document.getElementById('viewSolution');
 
+        detail.innerHTML = `
+            <div class="detail-row">
+                <span class="detail-label">ID:</span>
+                <span class="detail-value">${problem.id}</span>
+            </div>
 
-    this.currentProblemId = problemId;
+            <div class="detail-row">
+                <span class="detail-label">SBU:</span>
+                <span class="detail-value">${problem.sbu}</span>
+            </div>
 
-
-    const modal = document.getElementById('viewSolutionModal');
-
-    const detail = document.getElementById('viewProblemDetail');
-
-    const solutionDiv = document.getElementById('viewSolution');
-
-
-
-    detail.innerHTML = `
-
-        <div class="detail-row">
-            <span class="detail-label">ID:</span>
-            <span class="detail-value">${problem.id}</span>
-        </div>
-
-
-        <div class="detail-row">
-            <span class="detail-label">SBU:</span>
-            <span class="detail-value">${problem.sbu}</span>
-        </div>
-
-
-        <div class="detail-row">
-            <span class="detail-label">Priority:</span>
-            <span class="detail-value">
-                <span class="priority-badge ${problem.priority}">
-                    ${problem.priority.toUpperCase()}
+            <div class="detail-row">
+                <span class="detail-label">Priority:</span>
+                <span class="detail-value">
+                    <span class="priority-badge ${problem.priority}">
+                        ${problem.priority.toUpperCase()}
+                    </span>
                 </span>
-            </span>
-        </div>
+            </div>
 
+            <div class="detail-row">
+                <span class="detail-label">Reporter:</span>
+                <span class="detail-value">${problem.name}</span>
+            </div>
 
-        <div class="detail-row">
-            <span class="detail-label">Reporter:</span>
-            <span class="detail-value">${problem.name}</span>
-        </div>
+            <div class="detail-row">
+                <span class="detail-label">Employee ID:</span>
+                <span class="detail-value">${problem.employeeId}</span>
+            </div>
 
+            <div class="detail-row">
+                <span class="detail-label">Date:</span>
+                <span class="detail-value">${problem.date}</span>
+            </div>
 
-        <div class="detail-row">
-            <span class="detail-label">Employee ID:</span>
-            <span class="detail-value">${problem.employeeId}</span>
-        </div>
-
-
-        <div class="detail-row">
-            <span class="detail-label">Date:</span>
-            <span class="detail-value">${problem.date}</span>
-        </div>
-
-
-        <div class="detail-row">
-            <span class="detail-label">Status:</span>
-            <span class="detail-value">
-                <span class="status-badge ${problem.status}">
-                    ${problem.status}
+            <div class="detail-row">
+                <span class="detail-label">Status:</span>
+                <span class="detail-value">
+                    <span class="status-badge ${problem.status}">
+                        ${problem.status}
+                    </span>
                 </span>
-            </span>
-        </div>
+            </div>
 
+            <div class="detail-row">
+                <span class="detail-label">Problem:</span>
+                <span class="detail-value">${problem.problem}</span>
+            </div>
+        `;
 
-        <div class="detail-row">
-            <span class="detail-label">Problem:</span>
-            <span class="detail-value">${problem.problem}</span>
-        </div>
+        solutionDiv.textContent = problem.solution;
 
-    `;
-
-
-
-    solutionDiv.textContent = problem.solution;
-
-
-
-    const meetingBtn = document.querySelector('#viewSolutionModal #meetingBtn');
-
-if(meetingBtn){
-
-   meetingBtn.addEventListener("click", () => {
-    this.callMeeting(problemId);
-});
-}
-
-
-
-    modal.classList.add('show');
-
-}
-
-
-
-callMeeting(problemId){
-
-    const problem = this.problems.find(
-        p => p.id == problemId
-    );
-
-    if(!problem){
-        return;
+        modal.classList.add('show');
     }
 
+    // Changes status only (solution text is left as-is). Used from the "View Solution" modal.
+    async updateStatus(problemId, status) {
+        const problem = this.problems.find(p => p.id == problemId);
+        if (!problem) return;
 
-    const email = prompt(
-        "Enter Gmail address for meeting:"
-    );
+        try {
+            const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'updateSolution',
+                    id: String(problemId),
+                    solution: problem.solution || '',
+                    status: status
+                })
+            });
 
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.error || 'Unknown error');
+            }
 
-    if(!email){
-        return;
+            problem.status = status;
+            this.closeModal();
+            this.render();
+            this.showSyncStatus(`✓ Status updated: ${status}`, 'success');
+
+        } catch (error) {
+            console.error('Status update error:', error);
+            alert('Status update failed');
+        }
     }
 
+    callMeeting(problemId) {
+        const problem = this.problems.find(p => p.id == problemId);
+        if (!problem) return;
 
-    if(!email.includes("@")){
-        alert("Please enter a valid Gmail address");
-        return;
-    }
+        const email = prompt('Enter Gmail address for meeting:');
+        if (!email) return;
 
+        if (!email.includes('@')) {
+            alert('Please enter a valid Gmail address');
+            return;
+        }
 
+        const title = `Problem Discussion Meeting - ${problem.id}`;
 
-    const title =
-    `Problem Discussion Meeting - ${problem.id}`;
-
-
-
-    const description =
+        const description =
 `Problem ID: ${problem.id}
 
 SBU: ${problem.sbu}
@@ -1448,139 +1431,25 @@ Problem:
 ${problem.problem}
 
 Manager Solution:
-${problem.solution}
+${problem.solution || '(none yet)'}
 `;
 
+        const start = new Date();
+        const end = new Date(start.getTime() + 60 * 60 * 1000); // 1 hour meeting
 
+        const formatGoogleDate = (date) => date.toISOString().replace(/-|:|\.\d+/g, '');
 
-    // Current time
-    const start = new Date();
+        const calendarURL =
+            'https://calendar.google.com/calendar/render'
+            + '?action=TEMPLATE'
+            + '&text=' + encodeURIComponent(title)
+            + '&details=' + encodeURIComponent(description)
+            + '&add=' + encodeURIComponent(email)
+            + '&dates=' + formatGoogleDate(start) + '/' + formatGoogleDate(end);
 
-
-    // 1 hour meeting
-    const end = new Date(
-        start.getTime() + 60 * 60 * 1000
-    );
-
-
-
-    function formatGoogleDate(date){
-
-        return date
-        .toISOString()
-        .replace(/-|:|\.\d+/g,"");
-
+        window.open(calendarURL, '_blank');
     }
 
-
-
-    const calendarURL =
-    "https://calendar.google.com/calendar/render"
-    +
-    "?action=TEMPLATE"
-    +
-    "&text="
-    + encodeURIComponent(title)
-
-    +
-    "&details="
-    + encodeURIComponent(description)
-
-    +
-    "&add="
-    + encodeURIComponent(email)
-
-    +
-    "&dates="
-    + formatGoogleDate(start)
-    +
-    "/"
-    + formatGoogleDate(end);
-
-
-
-    window.open(
-        calendarURL,
-        "_blank"
-    );
-
-}
-
-    const title =
-    `Problem Discussion Meeting - ${problem.id}`;
-
-
-
-    const description = `
-Problem ID: ${problem.id}
-
-SBU: ${problem.sbu}
-
-Reporter: ${problem.name}
-
-Employee ID: ${problem.employeeId}
-
-
-Problem:
-${problem.problem}
-
-
-Manager Solution:
-${problem.solution}
-`;
-
-
-
-    const start = new Date();
-
-
-    const end = new Date(
-        start.getTime() + (60 * 60 * 1000)
-    );
-
-
-
-    const formatDate = (date)=>{
-
-        return date
-        .toISOString()
-        .replace(/-|:|\.\d\d\d/g,"");
-
-    };
-
-
-
-    const calendarURL =
-    "https://calendar.google.com/calendar/render?"
-    +
-    "action=TEMPLATE"
-    +
-    "&text="
-    + encodeURIComponent(title)
-
-    +
-    "&details="
-    + encodeURIComponent(description)
-
-    +
-    "&add="
-    + encodeURIComponent(email)
-
-    +
-    "&dates="
-    + formatDate(start)
-    +
-    "/"
-    + formatDate(end);
-
-
-
-    window.open(
-        calendarURL,
-        "_blank"
-    );
-
-}
     openDeleteModal(problemId) {
         const problem = this.problems.find(p => p.id == problemId);
         if (!problem) return;
@@ -1619,23 +1488,29 @@ ${problem.solution}
         modal.classList.add('show');
     }
 
-    confirmDelete() {
+    async confirmDelete() {
         if (!this.currentProblemId) return;
+        const problemId = this.currentProblemId;
 
-        this.problems = this.problems.filter(p => p.id !== this.currentProblemId);
-        this.saveProblems();
+        try {
+            const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'deleteProblem', id: String(problemId) })
+            });
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.error || 'Unknown error');
+            }
+        } catch (error) {
+            // If your Apps Script doesn't yet handle a "deleteProblem" action, this row
+            // will only be removed locally and will reappear after the next reload.
+            console.error('Delete sync failed (add a "deleteProblem" action to your Apps Script):', error);
+        }
+
+        this.problems = this.problems.filter(p => p.id !== problemId);
         this.closeModal();
         this.render();
         this.showSyncStatus('✓ Problem deleted', 'success');
-    }
-
-    updateStatus(problemId, status) {
-        const problem = this.problems.find(p => p.id == problemId);
-        problem.status = status;
-        this.saveProblems();
-        this.closeModal();
-        this.render();
-        this.showSyncStatus(`✓ Status: ${status}`, 'success');
     }
 
     closeModal(e) {
@@ -1711,15 +1586,15 @@ ${problem.solution}
 
                 <div class="problem-actions">
                    ${(!problem.solution || !problem.solution.trim()) ? `
-<button class="btn-small btn-add-solution" 
-type="button" 
+<button class="btn-small btn-add-solution"
+type="button"
 onclick="manager.openSolutionModal('${problem.id}')">
 + Add Solution
 </button>
 ` : ''}
                     ${(problem.solution && problem.solution.trim()) ? `
-<button class="btn-small btn-view-solution" 
-type="button" 
+<button class="btn-small btn-view-solution"
+type="button"
 onclick="manager.openViewSolutionModal('${problem.id}')">
 View Solution
 </button>
@@ -1730,23 +1605,15 @@ View Solution
         `).join('');
     }
 
-    saveProblems() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.problems));
-    }
-
     async loadProblems() {
         try {
             const response = await fetch(GOOGLE_APPS_SCRIPT_URL);
             const data = await response.json();
-            this.problems = data;
-
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(this.problems));
-
+            this.problems = Array.isArray(data) ? data : [];
         } catch (error) {
-            console.error("Google Sheet loading failed:", error);
-
-            const localData = localStorage.getItem(STORAGE_KEY);
-            this.problems = localData ? JSON.parse(localData) : [];
+            console.error('Google Sheet loading failed:', error);
+            this.showSyncStatus('⚠ Could not load data from Google Sheet', 'error');
+            this.problems = [];
         }
     }
 }
