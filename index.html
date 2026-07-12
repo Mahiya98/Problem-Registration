@@ -1408,13 +1408,11 @@ class ProblemManager {
         const problem = this.problems.find(p => p.id == problemId);
         if (!problem) return;
 
-        const email = prompt('Enter Gmail address for meeting:');
-        if (!email) return;
+        const email = 'sanjeed@akijshipping.com';
 
-        if (!email.includes('@')) {
-            alert('Please enter a valid Gmail address');
-            return;
-        }
+        // Open the tab immediately, still inside the click handler, so the
+        // browser doesn't treat it as an unrequested popup.
+        const meetingTab = window.open('', '_blank');
 
         const title = `Problem Discussion Meeting - ${problem.id}`;
 
@@ -1447,7 +1445,14 @@ ${problem.solution || '(none yet)'}
             + '&add=' + encodeURIComponent(email)
             + '&dates=' + formatGoogleDate(start) + '/' + formatGoogleDate(end);
 
-        window.open(calendarURL, '_blank');
+        if (meetingTab) {
+            // Tab opened fine — navigate it to the real Calendar URL.
+            meetingTab.location.href = calendarURL;
+        } else {
+            // Browser blocked window.open() entirely (e.g. popups disabled) —
+            // fall back to navigating the current tab so the user still gets there.
+            window.location.href = calendarURL;
+        }
     }
 
     openDeleteModal(problemId) {
