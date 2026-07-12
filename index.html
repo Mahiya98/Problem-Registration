@@ -932,11 +932,7 @@ body {
             </div>
            <div class="modal-footer">
 
-    <button id="meetingBtn"
-    class="btn-meeting"
-    type="button">
-    📅 CALL MEETING
-    </button>
+    
 
 
     <button id="progressBtn" 
@@ -975,11 +971,35 @@ body {
                     <div id="viewSolution" class="solution-text"></div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button id="progressBtn" class="btn-progress" type="button">IN PROGRESS</button>
-                <button id="solvedBtn" class="btn-solved" type="button">MARK AS SOLVED</button>
-                <button class="btn-cancel" type="button">CLOSE</button>
-            </div>
+           <div class="modal-footer">
+
+    <button id="meetingBtn"
+    class="btn-meeting"
+    type="button">
+    📅 CALL MEETING
+    </button>
+
+
+    <button id="progressBtn"
+    class="btn-progress"
+    type="button">
+    IN PROGRESS
+    </button>
+
+
+    <button id="solvedBtn"
+    class="btn-solved"
+    type="button">
+    MARK AS SOLVED
+    </button>
+
+
+    <button class="btn-cancel"
+    type="button">
+    CLOSE
+    </button>
+
+</div>
         </div>
     </div>
 
@@ -1365,14 +1385,15 @@ class ProblemManager {
 
 
 
-    const meetingBtn = document.getElementById('meetingBtn');
+    const meetingBtn = document.querySelector('#viewSolutionModal #meetingBtn');
 
-    if(meetingBtn){
+if(meetingBtn){
 
-        meetingBtn.onclick = () =>
-            this.callMeeting(problemId);
+    meetingBtn.onclick = () => {
+        this.callMeeting(problemId);
+    };
 
-    }
+}
 
 
 
