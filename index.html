@@ -269,15 +269,18 @@ body {
 }
 
 .btn-meeting {
-    background: #7c3aed;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s;
-    margin-right: 10px;
+    background:#7c3aed;
+    color:white;
+    padding:10px 20px;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    font-weight:bold;
+    margin-right:10px;
+}
+
+.btn-meeting:hover{
+    background:#6d28d9;
 }
 
 .btn-meeting:hover {
@@ -927,10 +930,35 @@ body {
                     <textarea id="managerSolution" class="form-input form-textarea" placeholder="Enter the solution here..." required></textarea>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button id="saveSolutionBtn" class="btn-submit" type="button">SAVE SOLUTION</button>
-                <button class="btn-cancel" type="button">CANCEL</button>
-            </div>
+           <div class="modal-footer">
+
+    <button id="meetingBtn"
+    class="btn-meeting"
+    type="button">
+    📅 CALL MEETING
+    </button>
+
+
+    <button id="progressBtn" 
+    class="btn-progress" 
+    type="button">
+    IN PROGRESS
+    </button>
+
+
+    <button id="solvedBtn" 
+    class="btn-solved" 
+    type="button">
+    MARK AS SOLVED
+    </button>
+
+
+    <button class="btn-cancel" 
+    type="button">
+    CLOSE
+    </button>
+
+</div>
         </div>
     </div>
 
@@ -1250,58 +1278,223 @@ class ProblemManager {
     }
 
     openViewSolutionModal(problemId) {
-        const problem = this.problems.find(p => p.id == problemId);
-        if (!problem || !problem.solution || !problem.solution.trim()) return;
 
-        this.currentProblemId = problemId;
+    const problem = this.problems.find(
+        p => p.id == problemId
+    );
 
-        const modal = document.getElementById('viewSolutionModal');
-        const detail = document.getElementById('viewProblemDetail');
-        const solutionDiv = document.getElementById('viewSolution');
 
-        detail.innerHTML = `
-            <div class="detail-row">
-                <span class="detail-label">ID:</span>
-                <span class="detail-value">${problem.id}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">SBU:</span>
-                <span class="detail-value">${problem.sbu}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Priority:</span>
-                <span class="detail-value"><span class="priority-badge ${problem.priority}">${problem.priority.toUpperCase()}</span></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Reporter:</span>
-                <span class="detail-value">${problem.name}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Employee ID:</span>
-                <span class="detail-value">${problem.employeeId}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Date:</span>
-                <span class="detail-value">${new Date(problem.date).toLocaleDateString()}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Status:</span>
-                <span class="detail-value"><span class="status-badge ${problem.status}">${problem.status}</span></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Problem:</span>
-                <span class="detail-value">${problem.problem}</span>
-            </div>
-        `;
-
-        solutionDiv.textContent = problem.solution;
-
-        document.getElementById('progressBtn').onclick = () => this.updateStatus(problemId, 'in-progress');
-        document.getElementById('solvedBtn').onclick = () => this.updateStatus(problemId, 'solved');
-
-        modal.classList.add('show');
+    if (!problem || !problem.solution || !problem.solution.trim()) {
+        return;
     }
 
+
+    this.currentProblemId = problemId;
+
+
+    const modal = document.getElementById('viewSolutionModal');
+
+    const detail = document.getElementById('viewProblemDetail');
+
+    const solutionDiv = document.getElementById('viewSolution');
+
+
+
+    detail.innerHTML = `
+
+        <div class="detail-row">
+            <span class="detail-label">ID:</span>
+            <span class="detail-value">${problem.id}</span>
+        </div>
+
+
+        <div class="detail-row">
+            <span class="detail-label">SBU:</span>
+            <span class="detail-value">${problem.sbu}</span>
+        </div>
+
+
+        <div class="detail-row">
+            <span class="detail-label">Priority:</span>
+            <span class="detail-value">
+                <span class="priority-badge ${problem.priority}">
+                    ${problem.priority.toUpperCase()}
+                </span>
+            </span>
+        </div>
+
+
+        <div class="detail-row">
+            <span class="detail-label">Reporter:</span>
+            <span class="detail-value">${problem.name}</span>
+        </div>
+
+
+        <div class="detail-row">
+            <span class="detail-label">Employee ID:</span>
+            <span class="detail-value">${problem.employeeId}</span>
+        </div>
+
+
+        <div class="detail-row">
+            <span class="detail-label">Date:</span>
+            <span class="detail-value">${problem.date}</span>
+        </div>
+
+
+        <div class="detail-row">
+            <span class="detail-label">Status:</span>
+            <span class="detail-value">
+                <span class="status-badge ${problem.status}">
+                    ${problem.status}
+                </span>
+            </span>
+        </div>
+
+
+        <div class="detail-row">
+            <span class="detail-label">Problem:</span>
+            <span class="detail-value">${problem.problem}</span>
+        </div>
+
+    `;
+
+
+
+    solutionDiv.textContent = problem.solution;
+
+
+
+    const meetingBtn = document.getElementById('meetingBtn');
+
+    if(meetingBtn){
+
+        meetingBtn.onclick = () =>
+            this.callMeeting(problemId);
+
+    }
+
+
+
+    modal.classList.add('show');
+
+}
+
+
+
+
+callMeeting(problemId){
+
+
+    const problem = this.problems.find(
+        p => p.id == problemId
+    );
+
+
+    if(!problem){
+        return;
+    }
+
+
+
+    const email = prompt(
+        "Enter Gmail address for meeting:"
+    );
+
+
+    if(!email){
+        return;
+    }
+
+
+
+    if(!email.includes("@gmail.com")){
+
+        alert(
+            "Please enter a valid Gmail address"
+        );
+
+        return;
+
+    }
+
+
+
+    const title =
+    `Problem Discussion Meeting - ${problem.id}`;
+
+
+
+    const description = `
+Problem ID: ${problem.id}
+
+SBU: ${problem.sbu}
+
+Reporter: ${problem.name}
+
+Employee ID: ${problem.employeeId}
+
+
+Problem:
+${problem.problem}
+
+
+Manager Solution:
+${problem.solution}
+`;
+
+
+
+    const start = new Date();
+
+
+    const end = new Date(
+        start.getTime() + (60 * 60 * 1000)
+    );
+
+
+
+    const formatDate = (date)=>{
+
+        return date
+        .toISOString()
+        .replace(/-|:|\.\d\d\d/g,"");
+
+    };
+
+
+
+    const calendarURL =
+    "https://calendar.google.com/calendar/render?"
+    +
+    "action=TEMPLATE"
+    +
+    "&text="
+    + encodeURIComponent(title)
+
+    +
+    "&details="
+    + encodeURIComponent(description)
+
+    +
+    "&add="
+    + encodeURIComponent(email)
+
+    +
+    "&dates="
+    + formatDate(start)
+    +
+    "/"
+    + formatDate(end);
+
+
+
+    window.open(
+        calendarURL,
+        "_blank"
+    );
+
+}
     openDeleteModal(problemId) {
         const problem = this.problems.find(p => p.id == problemId);
         if (!problem) return;
