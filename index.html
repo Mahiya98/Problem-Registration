@@ -1233,22 +1233,84 @@ class ProblemManager {
         modal.classList.add('show');
     }
 
-    saveSolution(problemId) {
-        const solution = document.getElementById('managerSolution').value.trim();
-        if (!solution) {
-            alert('Please enter a solution');
-            return;
+    async saveSolution(problemId) {
+
+    const solution = document
+    .getElementById('managerSolution')
+    .value
+    .trim();
+
+
+    if (!solution) {
+
+        alert('Please enter a solution');
+        return;
+
+    }
+
+
+    try {
+
+
+        const response = await fetch(
+            GOOGLE_APPS_SCRIPT_URL,
+            {
+                method:"POST",
+
+                body:JSON.stringify({
+
+                    action:"updateSolution",
+                    id:problemId,
+                    solution:solution
+
+                })
+            }
+        );
+
+
+        const result = await response.json();
+
+
+        if(!result.success){
+
+            throw new Error(result.error);
+
         }
 
-        const problem = this.problems.find(p => p.id == problemId);
-        problem.solution = solution;
-        problem.status = 'open';
 
-        this.saveProblems();
+
+        // update dashboard display
+        const problem = this.problems.find(
+            p => p.id == problemId
+        );
+
+
+        problem.solution = solution;
+
+
         this.closeModal();
+
         this.render();
-        this.showSyncStatus('✓ Solution saved', 'success');
+
+
+        this.showSyncStatus(
+        '✓ Solution saved permanently',
+        'success'
+        );
+
+
+
+    } catch(error){
+
+        console.error(error);
+
+        alert(
+        "Solution could not be saved"
+        );
+
     }
+
+}
 
     openViewSolutionModal(problemId) {
         const problem = this.problems.find(p => p.id == problemId);
