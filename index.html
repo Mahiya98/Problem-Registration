@@ -1233,21 +1233,95 @@ class ProblemManager {
         modal.classList.add('show');
     }
 
-    async saveSolution(problemId) {
-
-    const solution = document
-    .getElementById('managerSolution')
-    .value
-    .trim();
+    async saveSolution(problemId){
 
 
-    if (!solution) {
+const solution=document
+.getElementById('managerSolution')
+.value
+.trim();
 
-        alert('Please enter a solution');
-        return;
 
-    }
 
+if(!solution){
+
+alert("Enter solution");
+return;
+
+}
+
+
+
+try{
+
+
+const response=await fetch(
+GOOGLE_APPS_SCRIPT_URL,
+{
+
+method:"POST",
+
+body:JSON.stringify({
+
+action:"updateSolution",
+
+id:problemId,
+
+solution:solution
+
+})
+
+});
+
+
+
+const result=await response.json();
+
+
+
+if(!result.success){
+
+throw new Error(result.error);
+
+}
+
+
+
+// reload latest data from sheet
+
+await this.loadProblems();
+
+
+
+this.closeModal();
+
+
+this.render();
+
+
+
+this.showSyncStatus(
+"✓ Solution saved successfully",
+"success"
+);
+
+
+
+}
+catch(error){
+
+
+console.error(error);
+
+alert(
+"Solution save failed"
+);
+
+
+}
+
+
+}
 
     try {
 
