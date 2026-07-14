@@ -947,17 +947,10 @@ body {
             </div>
            <div class="modal-footer">
 
-    <button id="addProgressBtn"
-    class="btn-progress"
-    type="button">
-    SAVE &amp; MARK IN PROGRESS
-    </button>
-
-
-    <button id="addSolvedBtn"
+    <button id="saveSolutionBtn"
     class="btn-solved"
     type="button">
-    SAVE &amp; MARK AS SOLVED
+    SAVE SOLUTION
     </button>
 
 
@@ -1095,9 +1088,10 @@ class ProblemManager {
 
         document.getElementById('confirmDeleteBtn').addEventListener('click', () => this.confirmDelete());
 
-        // "Add Manager Solution" modal: saving a solution also sets the status.
-        document.getElementById('addProgressBtn').addEventListener('click', () => this.saveSolution('in-progress'));
-        document.getElementById('addSolvedBtn').addEventListener('click', () => this.saveSolution('solved'));
+        // "Add Manager Solution" modal: one button saves the solution and
+        // marks it in-progress. Use the "View Solution" modal afterward to
+        // mark it solved once confirmed.
+        document.getElementById('saveSolutionBtn').addEventListener('click', () => this.saveSolution('in-progress'));
 
         // "View Solution" modal: change status (solution text already exists).
         document.getElementById('viewProgressBtn').addEventListener('click', () => this.updateStatus(this.currentProblemId, 'in-progress'));
