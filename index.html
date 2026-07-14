@@ -864,6 +864,7 @@ body {
         <option value="Md. Tanvir Rahman Labib">Md. Tanvir Rahman Labib</option>
         <option value="Mahiya Watid">Mahiya Watid</option>
         <option value="Md.Maruf Hossain">Md.Maruf Hossain</option>
+        <option value="Anoy Kumar Das">Anoy Kumar Das</option>
     </select>
 
 </div>
@@ -871,25 +872,22 @@ body {
                         <label class="form-label" for="employeeId">EMPLOYEE EMAIL</label>
                         <select id="employeeId" class="form-input" required>
                             <option value="">Select your email</option>
-                            <option value="sadman01@akijcement.com">sadman01@akijcement.com</option>
-                            <option value="saurav@akijcement.com">saurav@akijcement.com</option>
-                            <option value="jubayer01@akijessentials.com">jubayer01@akijessentials.com</option>
+                            <option value="injamamul@akijbuildingsolutions.com">injamamul@akijbuildingsolutions.com</option>
                             <option value="hasib04@akijessential.com">hasib04@akijessential.com</option>
-                            <option value="abujafor@akijessential.com">abujafor@akijessential.com</option>
-                            <option value="soaib@akijagrofeed.com">soaib@akijagrofeed.com</option>
-                            <option value="rahaman01@akijcement.com">rahaman01@akijcement.com</option>
                             <option value="mushfiqur03@akijessential.com">mushfiqur03@akijessential.com</option>
-                            <option value="sajjad04@akijcement.com">sajjad04@akijcement.com</option>
+                            <option value="soaib@akijagrofeed.com">soaib@akijagrofeed.com</option>
+                            <option value="md.raselahmed@akijessential.com">md.raselahmed@akijessential.com</option>
+                            <option value="rahaman01@akijcement.com">rahaman01@akijcement.com</option>
                             <option value="rayhan07@akijengineering.com">rayhan07@akijengineering.com</option>
                             <option value="tareq02@akijispat.com">tareq02@akijispat.com</option>
-                            <option value="mehedi18@akijcement.com">mehedi18@akijcement.com</option>
-                            <option value="injamamul@akijbuildingsolutions.com">injamamul@akijbuildingsolutions.com</option>
-                            <option value="tanvir12@akijagrofeed.com">tanvir12@akijagrofeed.com</option>
-                            <option value="bakar@akijagrofeed.com">bakar@akijagrofeed.com</option>
                             <option value="arman03@akijispat.com">arman03@akijispat.com</option>
-                            <option value="md.arifulislam@akijresource.com">md.arifulislam@akijresource.com</option>
+                            <option value="sadman01@akijcement.com">sadman01@akijcement.com</option>
+                            <option value="sajjad04@akijcement.com">sajjad04@akijcement.com</option>
+                            <option value="jubayer01@akijessentials.com">jubayer01@akijessentials.com</option>
+                            <option value="tanvir12@akijagrofeed.com">tanvir12@akijagrofeed.com</option>
                             <option value="mahiya@akijresource.com">mahiya@akijresource.com</option>
-                            <option value="tahmidulislam@akijresource.com">tahmidulislam@akijresource.com</option>
+                            <option value="md.marufhossain@akijlightengineering.com">md.marufhossain@akijlightengineering.com</option>
+                            <option value="anoy@akijlightengineering.com">anoy@akijlightengineering.com</option>
                         </select>
                     </div>
                 </div>
@@ -1008,6 +1006,14 @@ body {
     </button>
 
 
+    <button id="sendMailBtn"
+    class="btn-small btn-view-solution"
+    style="padding:10px 20px;"
+    type="button">
+    ✉ SEND MAIL
+    </button>
+
+
     <button class="btn-cancel"
     type="button">
     CLOSE
@@ -1097,6 +1103,7 @@ class ProblemManager {
         document.getElementById('viewProgressBtn').addEventListener('click', () => this.updateStatus(this.currentProblemId, 'in-progress'));
         document.getElementById('viewSolvedBtn').addEventListener('click', () => this.updateStatus(this.currentProblemId, 'solved'));
         document.getElementById('meetingBtn').addEventListener('click', () => this.callMeeting(this.currentProblemId));
+        document.getElementById('sendMailBtn').addEventListener('click', () => this.sendMail(this.currentProblemId));
     }
 
     setDefaultDate() {
@@ -1473,6 +1480,44 @@ ${problem.solution || '(none yet)'}
             // Browser blocked window.open() entirely (e.g. popups disabled) —
             // fall back to navigating the current tab so the user still gets there.
             window.location.href = calendarURL;
+        }
+    }
+
+    async sendMail(problemId) {
+        const problem = this.problems.find(p => p.id == problemId);
+        if (!problem) return;
+
+        if (!problem.employeeId) {
+            alert('This ticket has no email on file.');
+            return;
+        }
+
+        const btn = document.getElementById('sendMailBtn');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'SENDING...';
+
+        try {
+            const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'sendMail',
+                    id: String(problemId)
+                })
+            });
+
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.error || 'Unknown error');
+            }
+
+            this.showSyncStatus(`✓ Mail sent to ${problem.employeeId}`, 'success');
+        } catch (error) {
+            console.error('Send mail error:', error);
+            alert('Failed to send mail.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
         }
     }
 
