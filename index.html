@@ -868,8 +868,29 @@ body {
 
 </div>
                     <div class="form-group">
-                        <label class="form-label" for="employeeId">EMPLOYEE ID</label>
-                        <input type="text" id="employeeId" class="form-input" placeholder="Enter employee ID" required>
+                        <label class="form-label" for="employeeId">EMPLOYEE EMAIL</label>
+                        <select id="employeeId" class="form-input" required>
+                            <option value="">Select your email</option>
+                            <option value="sadman01@akijcement.com">sadman01@akijcement.com</option>
+                            <option value="saurav@akijcement.com">saurav@akijcement.com</option>
+                            <option value="jubayer01@akijessentials.com">jubayer01@akijessentials.com</option>
+                            <option value="hasib04@akijessential.com">hasib04@akijessential.com</option>
+                            <option value="abujafor@akijessential.com">abujafor@akijessential.com</option>
+                            <option value="soaib@akijagrofeed.com">soaib@akijagrofeed.com</option>
+                            <option value="rahaman01@akijcement.com">rahaman01@akijcement.com</option>
+                            <option value="mushfiqur03@akijessential.com">mushfiqur03@akijessential.com</option>
+                            <option value="sajjad04@akijcement.com">sajjad04@akijcement.com</option>
+                            <option value="rayhan07@akijengineering.com">rayhan07@akijengineering.com</option>
+                            <option value="tareq02@akijispat.com">tareq02@akijispat.com</option>
+                            <option value="mehedi18@akijcement.com">mehedi18@akijcement.com</option>
+                            <option value="injamamul@akijbuildingsolutions.com">injamamul@akijbuildingsolutions.com</option>
+                            <option value="tanvir12@akijagrofeed.com">tanvir12@akijagrofeed.com</option>
+                            <option value="bakar@akijagrofeed.com">bakar@akijagrofeed.com</option>
+                            <option value="arman03@akijispat.com">arman03@akijispat.com</option>
+                            <option value="md.arifulislam@akijresource.com">md.arifulislam@akijresource.com</option>
+                            <option value="mahiya@akijresource.com">mahiya@akijresource.com</option>
+                            <option value="tahmidulislam@akijresource.com">tahmidulislam@akijresource.com</option>
+                        </select>
                     </div>
                 </div>
 
@@ -1243,7 +1264,7 @@ class ProblemManager {
                 <span class="detail-value">${problem.name}</span>
             </div>
             <div class="detail-row">
-                <span class="detail-label">Employee ID:</span>
+                <span class="detail-label">Email:</span>
                 <span class="detail-value">${problem.employeeId}</span>
             </div>
             <div class="detail-row">
@@ -1343,7 +1364,7 @@ class ProblemManager {
             </div>
 
             <div class="detail-row">
-                <span class="detail-label">Employee ID:</span>
+                <span class="detail-label">Email:</span>
                 <span class="detail-value">${problem.employeeId}</span>
             </div>
 
@@ -1423,7 +1444,7 @@ SBU: ${problem.sbu}
 
 Reporter: ${problem.name}
 
-Employee ID: ${problem.employeeId}
+Email: ${problem.employeeId}
 
 Problem:
 ${problem.problem}
@@ -1476,7 +1497,7 @@ ${problem.solution || '(none yet)'}
                 <span class="detail-value">${problem.name}</span>
             </div>
             <div class="detail-row">
-                <span class="detail-label">Employee ID:</span>
+                <span class="detail-label">Email:</span>
                 <span class="detail-value">${problem.employeeId}</span>
             </div>
             <div class="detail-row">
@@ -1515,7 +1536,7 @@ ${problem.solution || '(none yet)'}
         this.problems = this.problems.filter(p => p.id !== problemId);
         this.closeModal();
         this.render();
-        this.showSyncStatus('✓ Problem deleted', 'success');
+        this.showSyncStatus('✓ Problem hidden', 'success');
     }
 
     closeModal(e) {
@@ -1564,7 +1585,7 @@ ${problem.solution || '(none yet)'}
                 <div class="problem-header">
                     <div class="problem-meta">
                         <span class="problem-sbu">${problem.sbu}</span>
-                        <span class="employee-id-badge">EMP: ${problem.employeeId}</span>
+                        <span class="employee-id-badge">${problem.employeeId}</span>
                         <span class="priority-badge ${problem.priority}">${problem.priority}</span>
                         <div class="problem-title">${problem.problem.substring(0, 50)}${problem.problem.length > 50 ? '...' : ''}</div>
                         <div class="problem-meta-info">
